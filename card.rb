@@ -1,15 +1,28 @@
-class Card
-   require 'byebug'
+require 'byebug'
 
-  def self.generate_deck(pairs)
-    alpha = ("A".."Z").to_a
-    result = []
-    alpha.take(pairs).each do |face_value|
-      2.times { result << Card.new(face_value) }
+class Card
+
+  class << self
+    FIRST_ASCII = 33
+    LAST_ASCII = 126
+    def generate_deck(pairs)
+      if pairs > (LAST_ASCII - FIRST_ASCII)
+        raise "Cannot generate #{pairs} pairs. Max allowed: #{LAST_ASCII - FIRST_ASCII}"
+      end
+      result = []
+      pairs.times do |symbol_num|
+        2.times { result << Card.nth_ascii(symbol_num) }
+      end
+      result.shuffle
     end
-    result.shuffle
+
+    def nth_ascii(n)
+      (n + 33).chr
+    end
+
   end
 
+  public
   attr_reader :face_value
 
   def initialize(face_value)
@@ -17,12 +30,12 @@ class Card
     @revealed = false
   end
 
-  def hide
-    @revealed = false
+  def ==(arg)
+    @face_value == arg.face_value
   end
 
-  def revealed?
-    @revealed
+  def hide
+    @revealed = false
   end
 
   def reveal
@@ -30,15 +43,23 @@ class Card
     @face_value
   end
 
-  def to_s
-    if @revealed
-      @face_value
-    else
-      " "
-    end
+  def revealed?
+    @revealed
   end
 
-  def ==(arg)
-    @face_value == arg.face_value
+  def to_s
+    @revealed ? @face_value : " "
   end
+
+  private
+  attr_reader :revealed
+
+end
+
+if __FILE__ == $PROGRAM_NAME
+  p Card.generate_deck 2
+  p Card.generate_deck 4
+  p Card.generate_deck 5
+  p Card.generate_deck 93
+  p Card.generate_deck 100
 end
