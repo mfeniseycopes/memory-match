@@ -7,12 +7,12 @@ class Board
   attr_reader :grid
 
   def initialize(difficulty_level)
-    @difficulty = DIFFICULTY[difficulty_level]
-    @grid = Array.new(@difficulty) { Array.new(@difficulty) }
+    @grid_size = DIFFICULTY[difficulty_level]
+    @grid = Array.new(@grid_size) { Array.new(@grid_size) }
   end
 
   def populate
-    deck = Card.generate_deck(@difficulty)
+    deck = Card.generate_deck (@grid_size ** 2) * 2
     @grid.map! do |row|
       row.map! do |pos|
         pos = deck.pop
