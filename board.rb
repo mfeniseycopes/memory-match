@@ -1,4 +1,5 @@
 require_relative 'card.rb'
+require 'byebug'
 
 class Board
 
@@ -11,14 +12,17 @@ class Board
     @grid = Array.new(@grid_size) { Array.new(@grid_size) }
   end
 
+  def [](pos)
+    invalid_pos_error unless valid_pos? pos
+    x, y = pos
+    # debugger
+    @grid[x][y]
+  end
+
   def populate
-    deck = Card.generate_deck (@grid_size ** 2) * 2
-    @grid.map! do |row|
-      row.map! do |pos|
-        pos = deck.pop
-      end
-    end
-    @grid
+    deck = Card.generate_deck (@grid_size ** 2)
+
+    @grid.map! { |row| row.map! { |pos| pos = deck.pop } }
   end
 
   def render(status = nil)
@@ -29,21 +33,47 @@ class Board
     puts status if !!status
   end
 
+  def reveal(pos)
+    invalid_pos_error unless valid_pos? pos
+    card = self[pos]
+    card.reveal
+  end
+
   def won?
     @grid.all? do |row|
       row.all? { |card| card.revealed? }
     end
   end
 
-  def reveal(row, column)
-    card_at(row, column).reveal
+  private
+  attr_accessor :grid_size
+
+  def []=(pos, card)
+    x, y = pos
+    @grid[x][y] = card
   end
 
-  def card_at(row, column)
-    if row < @grid.length && column < @grid.first.length
-      @grid[row][column]
-    else
-      nil
-    end
+  def in_bounds?(pos)
+    pos.all? { |el| el.between?(0, grid_size) }
   end
+
+  def invalid_pos_error
+    raise ArgumentError.new "Method takes Array of 2 numbers as argument"
+  end
+
+  def valid_pos?(pos)
+    return true if pos.is_a?(Array) && pos.length == 2 &&
+      pos.all? { |el| el.is_a? Numeric } &&
+      in_bounds?(pos)
+    false
+  end
+
+end
+
+if __FILE__ == $PROGRAM_NAME
+  b = Board.new :easy
+  b.populate
+  b.render
+  b.reveal [0,0]
+  b.render
 end

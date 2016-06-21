@@ -3,13 +3,14 @@ require 'byebug'
 class Card
 
   # class
-  def self.generate_deck(pairs)
+  def self.generate_deck(size)
+    pairs = size / 2
     if pairs > (LAST_ASCII - FIRST_ASCII)
       raise "Cannot generate #{pairs} pairs. Max allowed: #{LAST_ASCII - FIRST_ASCII}"
     end
     result = []
     pairs.times do |symbol_num|
-      2.times { result << nth_ascii(symbol_num) }
+      2.times { result << Card.new(nth_ascii symbol_num) }
     end
     result.shuffle
   end
