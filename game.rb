@@ -71,6 +71,9 @@ class Game
 
 end
 
+p = HumanPlayer.new
+Game.new(p).play
+
 if __FILE__ == $PROGRAM_NAME
   p = HumanPlayer.new
   Game.new(p).play
