@@ -2,25 +2,18 @@ require 'byebug'
 
 class Card
 
-  class << self
-    FIRST_ASCII = 33
-    LAST_ASCII = 126
-    def generate_deck(pairs)
-      if pairs > (LAST_ASCII - FIRST_ASCII)
-        raise "Cannot generate #{pairs} pairs. Max allowed: #{LAST_ASCII - FIRST_ASCII}"
-      end
-      result = []
-      pairs.times do |symbol_num|
-        2.times { result << Card.nth_ascii(symbol_num) }
-      end
-      result.shuffle
+  # class
+  def self.generate_deck(pairs)
+    if pairs > (LAST_ASCII - FIRST_ASCII)
+      raise "Cannot generate #{pairs} pairs. Max allowed: #{LAST_ASCII - FIRST_ASCII}"
     end
-
-    def nth_ascii(n)
-      (n + 33).chr
+    result = []
+    pairs.times do |symbol_num|
+      2.times { result << nth_ascii(symbol_num) }
     end
-
+    result.shuffle
   end
+
 
   public
   attr_reader :face_value
@@ -51,8 +44,19 @@ class Card
     @revealed ? @face_value : " "
   end
 
+  protected
+
+  def self.nth_ascii(n)
+    (n + 33).chr
+  end
+
+
   private
-  attr_reader :revealed
+  attr_writer :face_value
+  attr_accessor :revealed
+
+  FIRST_ASCII = 33
+  LAST_ASCII = 126
 
 end
 
