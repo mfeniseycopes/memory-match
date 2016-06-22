@@ -1,3 +1,5 @@
+require 'byebug'
+
 class Player
   def prompt
     puts "Please choose a card:"
@@ -10,7 +12,9 @@ end
 
 class HumanPlayer < Player
   def get_input
-    gets.chomp.split(",").map(&:to_i)
+    # debugger
+    input = gets.chomp.split(",").map(&:to_i)
+    input
   end
 end
 

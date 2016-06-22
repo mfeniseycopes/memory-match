@@ -7,72 +7,82 @@ class Game
     @player = player
     @board = Board.new(:easy)
     @board.populate
-    @guessed_pos = nil
-    @previous_guess = nil
+    @guesses = []
   end
 
   def play
     until @board.won?
+      reset_guesses
       prompt
+      process_guesses
     end
     puts "GAME OVER MAN!!!"
   end
 
   private
-  def make_guess(row, column)
-    unless @guessed_pos.nil?
-      @previous_guess = @guessed_pos
-    end
 
-    @guessed_pos = [row, column]
-    guess_response = nil
-    unless @board.card_at(*@guessed_pos) && @board.card_at(*@guessed_pos).revealed?
-      status = "You revealed #{@board.reveal(*@guessed_pos)}"
-      guess_response = @board.reveal(*@guessed_pos)
-    else
-      status = "Card is already revealed. Guess again."
-      @guessed_pos = nil
-    end
-
-    @board.render(status)
-    guess_response
-  end
-
-  def match?
-    @board.card_at(*@guessed_pos) == @board.card_at(*@previous_guess)
+  def first_guess
+    @guesses.first
   end
 
   def guessing?
-    @guessed_pos.nil? || @previous_guess.nil?
+    # debugger
+    @guesses.length < 2
   end
 
+  def hide_guesses
+    @guesses.each { |guess| @board[guess].hide }
+  end
 
-  def prompt
-    while guessing?
+  def last_guess
+    @guesses.last
+  end
 
-      @board.render
-      @player.prompt
-      r, c = @player.get_input
-      @player.receive_guess make_guess(r, c)
+  def make_guess(pos)
+    @board.validate_position(pos)
+
+    @guesses << pos
+    if @board[last_guess].revealed?
+      raise "Card already matched. Try again!"
+    else
+      @board.reveal(last_guess)
     end
+  end
 
+  def match?
+    !guessing? &&
+    @board[first_guess] == @board[last_guess]
+  end
+
+  def process_guesses
     if match?
       puts "You've got a match!"
     else
+      # debugger
       puts "Not a match!"
-      @board.card_at(*@guessed_pos).hide
-      @board.card_at(*@previous_guess).hide
+      hide_guesses
     end
-    @guessed_pos = nil
-    @previous_guess = nil
-    sleep(2)
   end
 
+  def prompt
+    while guessing?
+      @board.render
+      @player.prompt
+      @player.receive_guess make_guess(@player.get_input)
+      @board.render
+    end
+
+  end
+
+  def reset_guesses
+    @guesses = []
+  end
+
+  def reveal_guesses
+    @guesses.each { |guess| @board[guess].reveal }
+  end
 
 end
-
-p = HumanPlayer.new
-Game.new(p).play
 
 if __FILE__ == $PROGRAM_NAME
   p = HumanPlayer.new

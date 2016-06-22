@@ -5,6 +5,15 @@ class Board
 
   DIFFICULTY = { easy: 2, medium: 4, hard: 10 }
 
+  def validate_position(pos)
+    unless pos.is_a?(Array) &&
+           pos.length == 2 &&
+           pos.all? { |int| int.is_a? Numeric } &&
+           in_bounds?(pos)
+      raise "Not a valid position"
+    end
+  end
+
   attr_reader :grid
 
   def initialize(difficulty_level)
@@ -13,7 +22,7 @@ class Board
   end
 
   def [](pos)
-    invalid_pos_error unless valid_pos? pos
+    validate_position(pos)
     x, y = pos
     # debugger
     @grid[x][y]
@@ -34,12 +43,14 @@ class Board
   end
 
   def reveal(pos)
-    invalid_pos_error unless valid_pos? pos
+    validate_position pos
     card = self[pos]
     card.reveal
   end
 
   def won?
+    p @grid
+    gets
     @grid.all? do |row|
       row.all? { |card| card.revealed? }
     end
@@ -54,26 +65,20 @@ class Board
   end
 
   def in_bounds?(pos)
-    pos.all? { |el| el.between?(0, grid_size) }
-  end
-
-  def invalid_pos_error
-    raise ArgumentError.new "Method takes Array of 2 numbers as argument"
-  end
-
-  def valid_pos?(pos)
-    return true if pos.is_a?(Array) && pos.length == 2 &&
-      pos.all? { |el| el.is_a? Numeric } &&
-      in_bounds?(pos)
-    false
+    pos.all? { |el| el.between?(0, grid_size-1) }
   end
 
 end
 
 if __FILE__ == $PROGRAM_NAME
-  b = Board.new :easy
-  b.populate
-  b.render
-  b.reveal [0,0]
-  b.render
+  if ARGV.shift == "pry"
+    require 'pry'
+    pry
+  else
+    b = Board.new :easy
+    b.populate
+    b.render
+    b.reveal [0,0]
+    b.render
+  end
 end
