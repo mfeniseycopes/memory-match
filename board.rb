@@ -35,7 +35,6 @@ class Board
 
   def render(status = nil)
     system("clear")
-    debugger
     @grid.each do |row|
       puts "[#{ row.join("] [") }]"
     end

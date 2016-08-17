@@ -3,9 +3,9 @@ require_relative 'player.rb'
 
 class Game
 
-  def initialize(player)
+  def initialize(player, difficulty = :easy)
     @player = player
-    @board = Board.new(:easy)
+    @board = Board.new(difficulty)
     @board.populate
     @guesses = []
   end
@@ -83,6 +83,15 @@ class Game
 end
 
 if __FILE__ == $PROGRAM_NAME
+  difficulty = ARGV.shift
+  board_difficulty = :easy
+
+  if difficulty == "med"
+    board_difficulty = :med
+  elsif difficulty == "hard"
+    board_difficulty = :hard
+  end
+
   p = HumanPlayer.new
-  Game.new(p).play
+  Game.new(p, board_difficulty).play
 end
