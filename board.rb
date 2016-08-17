@@ -35,6 +35,7 @@ class Board
 
   def render(status = nil)
     system("clear")
+    debugger
     @grid.each do |row|
       puts "[#{ row.join("] [") }]"
     end
@@ -48,8 +49,6 @@ class Board
   end
 
   def won?
-    p @grid
-    gets
     @grid.all? do |row|
       row.all? { |card| card.revealed? }
     end
@@ -67,17 +66,4 @@ class Board
     pos.all? { |el| el.between?(0, grid_size-1) }
   end
 
-end
-
-if __FILE__ == $PROGRAM_NAME
-  if ARGV.shift == "pry"
-    require 'pry'
-    pry
-  else
-    b = Board.new :easy
-    b.populate
-    b.render
-    b.reveal [0,0]
-    b.render
-  end
 end

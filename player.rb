@@ -79,6 +79,4 @@ class ComputerPlayer < Player
     end
   end
 
-  private
-
 end

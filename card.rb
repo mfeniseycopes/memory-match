@@ -60,11 +60,3 @@ class Card
   LAST_ASCII = 126
 
 end
-
-if __FILE__ == $PROGRAM_NAME
-  p Card.generate_deck 2
-  p Card.generate_deck 4
-  p Card.generate_deck 5
-  p Card.generate_deck 93
-  p Card.generate_deck 100
-end
