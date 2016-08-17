@@ -24,7 +24,6 @@ class Board
   def [](pos)
     validate_position(pos)
     x, y = pos
-    # debugger
     @grid[x][y]
   end
 

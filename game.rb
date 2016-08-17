@@ -26,7 +26,6 @@ class Game
   end
 
   def guessing?
-    # debugger
     @guesses.length < 2
   end
 
@@ -58,7 +57,6 @@ class Game
     if match?
       puts "You've got a match!"
     else
-      # debugger
       puts "Not a match!"
       hide_guesses
     end

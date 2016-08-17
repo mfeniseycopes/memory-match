@@ -12,7 +12,6 @@ end
 
 class HumanPlayer < Player
   def get_input
-    # debugger
     input = gets.chomp.split(",").map(&:to_i)
     input
   end
@@ -72,7 +71,6 @@ class ComputerPlayer < Player
   def generate_guess
     guess_made = false
     until guess_made
-      #debugger
       puts "generating guess"
       @current_guess = [rand(@rows), rand(@columns)]
       puts "#{@current_guess} - #{@guessed_board[@current_guess.first][@current_guess.last]}"
